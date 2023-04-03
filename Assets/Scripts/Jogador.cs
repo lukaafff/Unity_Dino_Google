@@ -12,9 +12,17 @@ public class Jogador : MonoBehaviour
     public float distanciaMinimaChao = 1;
     private bool estsNoChao;
     private float pontos;
+    private float highscore;
     public float multiplicadorPontos = 1;
     public Text pontosText;
+    public Text highscoreText;
     public Animator animatorComponent;
+
+    private void Start()
+    {
+        highscore = PlayerPrefs.GetFloat("HIGHSCORE");
+        highscoreText.text = $"Highscore: {Mathf.FloorToInt(highscore)}";
+    }
 
     void Update()
     {
@@ -63,6 +71,13 @@ public class Jogador : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Inimigo"))
         {
+            if (pontos > highscore)
+            {
+                highscore = pontos;
+
+                PlayerPrefs.SetFloat("HIGHSCORE", highscore);
+            }
+
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
