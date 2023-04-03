@@ -14,6 +14,7 @@ public class Jogador : MonoBehaviour
     private float pontos;
     public float multiplicadorPontos = 1;
     public Text pontosText;
+    public Animator animatorComponent;
 
     void Update()
     {
@@ -24,6 +25,15 @@ public class Jogador : MonoBehaviour
         {
             Pular();
         }
+
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            Abaixar();
+        }
+        else if (Input.GetKeyUp(KeyCode.DownArrow))
+        {
+            Levantar();
+        }
     }
 
     void Pular()
@@ -33,6 +43,17 @@ public class Jogador : MonoBehaviour
             rb.AddForce(Vector2.up * forcaPulo);
         }
     }
+
+    void Abaixar()
+    {
+        animatorComponent.SetBool("Abaixado", true);
+    }
+
+    void Levantar()
+    {
+        animatorComponent.SetBool("Abaixado", false);
+    }
+
     private void FixedUpdate()
     {
         estsNoChao = Physics2D.Raycast(transform.position, Vector2.down, distanciaMinimaChao, layerChao);
