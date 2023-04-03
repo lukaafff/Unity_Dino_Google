@@ -12,38 +12,62 @@ public class GeradorInimigos : MonoBehaviour
     public float dinossauroVoadorPontuacaoMinima = 300;
     public float delayInicial;
     public float delayEntreCactos;
+    public float distanciaMinima = 4;
+    public float distanciaMaxima = 8;
     public Jogador jogadorScript;
 
 
     private void Start()
     {
-        InvokeRepeating("GerarInimigo", delayInicial, delayEntreCactos);
+        //InvokeRepeating("GerarInimigo", delayInicial, delayEntreCactos);
+        StartCoroutine(GerarInimigo());
     }
 
-    private void GerarInimigo()
+    private IEnumerator GerarInimigo()
     {
-        var dado = Random.Range(1, 7);
+        yield return new WaitForSeconds(delayInicial);
 
-        if (jogadorScript.pontos >= dinossauroVoadorPontuacaoMinima && dado <= 2)
+        GameObject ultimoInimigoGerado = null;
+
+        var distanciNecessaria = 0f;
+
+        while (true)
         {
-            //gerar dinossauro voador
-            var posicaoYAleatoria = Random.Range(dinossuroVoadorYMinimo, dinossauroVoadorMaximo);
 
-            var posicao = new Vector3(
-                transform.position.x,
-                transform.position.y + posicaoYAleatoria,
-                transform.position.z
-            );
+            var geracaoObjetoLiberada =
+                ultimoInimigoGerado == null
+                 || Vector3.Distance(transform.position, ultimoInimigoGerado.transform.position) >= distanciNecessaria;
 
-            Instantiate(dinossauroVoadorPrefab, posicao, Quaternion.identity);
-        }
-        else
-        {
-            //gerar cacto
-            var quantidadeCactos = cactoPrefabs.Length;
-            var indiceAleatorio = Random.Range(0, quantidadeCactos);
-            var cactoPrefab = cactoPrefabs[indiceAleatorio];
-            Instantiate(cactoPrefab, transform.position, Quaternion.identity);
+            if (geracaoObjetoLiberada)
+            {
+                var dado = Random.Range(1, 7);
+
+                if (jogadorScript.pontos >= dinossauroVoadorPontuacaoMinima && dado <= 2)
+                {
+                    //gerar dinossauro voador
+                    var posicaoYAleatoria = Random.Range(dinossuroVoadorYMinimo, dinossauroVoadorMaximo);
+
+                    var posicao = new Vector3(
+                        transform.position.x,
+                        transform.position.y + posicaoYAleatoria,
+                        transform.position.z
+                    );
+
+                    ultimoInimigoGerado = Instantiate(dinossauroVoadorPrefab, posicao, Quaternion.identity);
+                }
+                else
+                {
+                    //gerar cacto
+                    var quantidadeCactos = cactoPrefabs.Length;
+                    var indiceAleatorio = Random.Range(0, quantidadeCactos);
+                    var cactoPrefab = cactoPrefabs[indiceAleatorio];
+                    ultimoInimigoGerado = Instantiate(cactoPrefab, transform.position, Quaternion.identity);
+                }
+
+                distanciNecessaria = Random.Range(distanciaMinima, distanciaMaxima);
+            }
+            yield return null;
+            //yield return new WaitForSeconds(delayEntreCactos);
         }
     }
 }
