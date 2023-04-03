@@ -17,17 +17,30 @@ public class Jogador : MonoBehaviour
     public Text pontosText;
     public Text highscoreText;
     public Animator animatorComponent;
+    public AudioSource pularAudioSource;
+    public AudioSource cemPontosAudioSource;
+    public AudioSource fimeJogoAudioSource;
 
     private void Start()
     {
         highscore = PlayerPrefs.GetFloat("HIGHSCORE");
-        highscoreText.text = $"Highscore: {Mathf.FloorToInt(highscore)}";
+        highscoreText.text = $"HI {Mathf.FloorToInt(highscore)}";
     }
 
     void Update()
     {
         pontos += Time.deltaTime * multiplicadorPontos;
-        pontosText.text = $"Pontos: {Mathf.FloorToInt(pontos)}";
+
+        var pontosArrendodado = Mathf.FloorToInt(pontos);
+        pontosText.text = $"Score: {pontosArrendodado}";
+
+        if (pontosArrendodado > 0
+            && pontosArrendodado % 100 == 0
+            && !cemPontosAudioSource.isPlaying)
+        {
+            cemPontosAudioSource.Play();
+        }
+
 
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
@@ -49,6 +62,7 @@ public class Jogador : MonoBehaviour
         if (estsNoChao)
         {
             rb.AddForce(Vector2.up * forcaPulo);
+            pularAudioSource.Play();
         }
     }
 
@@ -78,6 +92,7 @@ public class Jogador : MonoBehaviour
                 PlayerPrefs.SetFloat("HIGHSCORE", highscore);
             }
 
+            fimeJogoAudioSource.Play();
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
