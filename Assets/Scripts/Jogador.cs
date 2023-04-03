@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Jogador : MonoBehaviour
@@ -20,6 +19,7 @@ public class Jogador : MonoBehaviour
     public AudioSource pularAudioSource;
     public AudioSource cemPontosAudioSource;
     public AudioSource fimeJogoAudioSource;
+    public GameObject reinicarButton;
 
     private void Start()
     {
@@ -93,7 +93,10 @@ public class Jogador : MonoBehaviour
             }
 
             fimeJogoAudioSource.Play();
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
+            reinicarButton.SetActive(true);
+
+            Time.timeScale = 0;
         }
     }
 }
